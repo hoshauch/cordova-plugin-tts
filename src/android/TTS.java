@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.os.Build;
+import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.speech.tts.UtteranceProgressListener;
@@ -100,10 +101,8 @@ public class TTS extends CordovaPlugin implements OnInitListener {
             tts = null;
         } else {
             // warm up the tts engine with an empty string
-            HashMap<String, String> ttsParams = new HashMap<String, String>();
-            ttsParams.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "");
-            tts.setLanguage(new Locale("en", "US"));
-            tts.speak("", TextToSpeech.QUEUE_FLUSH, ttsParams);
+            tts.setLanguage(new Locale("de", "DE"));
+            tts.speak("", TextToSpeech.QUEUE_FLUSH, null, null);
 
             ttsInitialized = true;
         }
@@ -203,5 +202,14 @@ public class TTS extends CordovaPlugin implements OnInitListener {
         }
 
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, ttsParams);
+    }
+
+    private void speak(String text, HashMap<String, String> ttsParams) {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
+      }
+      else {
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, ttsParams);
+      }
     }
 }
