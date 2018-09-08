@@ -110,7 +110,13 @@ public class TTS extends CordovaPlugin implements OnInitListener {
 
     private void stop(JSONArray args, CallbackContext callbackContext)
       throws JSONException, NullPointerException {
-        tts.stop();
+      execCommandSafe(new Runnable() {
+        public void run() {
+          tts.stop();
+          callbackContext.success();
+        }
+      }, callbackContext);
+
     }
 
     private void callInstallTtsActivity(JSONArray args, CallbackContext callbackContext)
@@ -162,7 +168,7 @@ public class TTS extends CordovaPlugin implements OnInitListener {
     private void speak(final JSONArray args, final CallbackContext callbackContext)
             throws JSONException, NullPointerException {
 
-                
+
         JSONObject params = args.getJSONObject(0);
 
         if (params == null) {
@@ -217,15 +223,18 @@ public class TTS extends CordovaPlugin implements OnInitListener {
 
         execCommandSafe(new Runnable() {
             public void run() {
-              speak(text, ttsParams);
+
+              speak(text, ttsParams, callbackContext.getCallbackId());
+              callbackContext.success();
+
             }
           }, callbackContext);
 
     }
 
-    private void speak(String text, HashMap<String, String> ttsParams) {
+    private void speak(String text, HashMap<String, String> ttsParams, String id) {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, id);
       }
       else {
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, ttsParams);
