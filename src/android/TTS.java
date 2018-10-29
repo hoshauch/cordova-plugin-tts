@@ -223,10 +223,7 @@ public class TTS extends CordovaPlugin implements OnInitListener {
 
         execCommandSafe(new Runnable() {
             public void run() {
-
               speak(text, ttsParams, callbackContext.getCallbackId());
-              callbackContext.success();
-
             }
           }, callbackContext);
 
@@ -234,7 +231,7 @@ public class TTS extends CordovaPlugin implements OnInitListener {
 
     private void speak(String text, HashMap<String, String> ttsParams, String id) {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, id);
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, ttsParams, id);
       }
       else {
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, ttsParams);

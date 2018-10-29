@@ -10,33 +10,31 @@
 
 */
 
-exports.speak = function (text) {
-    return new Promise(function (resolve, reject) {
-        var options = {};
+exports.speak = function (options, success, error) {
+    var options = {};
 
-        if (typeof text == 'string') {
-            options.text = text;
-        } else {
-            options = text;
-        }
+    if (typeof text == 'string') {
+        options.text = text;
+    } else {
+        options = text;
+    }
 
-        cordova.exec(resolve, reject, 'TTS', 'speak', [options]);
-    });
+    cordova.exec(success, error, 'TTS', 'speak', [options]);
 };
 
-exports.stop = function() {
+exports.stop = function () {
     return new Promise(function (resolve, reject) {
         cordova.exec(resolve, reject, 'TTS', 'stop', []);
     });
 };
 
-exports.checkLanguage = function() {
+exports.checkLanguage = function () {
     return new Promise(function (resolve, reject) {
         cordova.exec(resolve, reject, 'TTS', 'checkLanguage', []);
     });
 };
 
-exports.openInstallTts = function() {
+exports.openInstallTts = function () {
     return new Promise(function (resolve, reject) {
         cordova.exec(resolve, reject, 'TTS', 'openInstallTts', []);
     });
