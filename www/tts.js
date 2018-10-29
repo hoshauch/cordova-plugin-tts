@@ -14,20 +14,14 @@ exports.speak = function (options, success, error) {
     cordova.exec(success, error, 'TTS', 'speak', [options]);
 };
 
-exports.stop = function () {
-    return new Promise(function (resolve, reject) {
-        cordova.exec(resolve, reject, 'TTS', 'stop', []);
-    });
+exports.stop = function (success, error) {
+    cordova.exec(success, error, 'TTS', 'stop', []);
 };
 
-exports.checkLanguage = function () {
-    return new Promise(function (resolve, reject) {
-        cordova.exec(resolve, reject, 'TTS', 'checkLanguage', []);
-    });
+exports.checkLanguage = function (success, error) {
+    cordova.exec(success, error, 'TTS', 'checkLanguage', []);
 };
 
-exports.openInstallTts = function () {
-    return new Promise(function (resolve, reject) {
-        cordova.exec(resolve, reject, 'TTS', 'openInstallTts', []);
-    });
+exports.openInstallTts = function (success, error) {
+    cordova.exec(success, error, 'TTS', 'openInstallTts', []);
 };

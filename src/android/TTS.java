@@ -231,7 +231,7 @@ public class TTS extends CordovaPlugin implements OnInitListener {
 
     private void speak(String text, HashMap<String, String> ttsParams, String id) {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        tts.speak(text, TextToSpeech.QUEUE_FLUSH, ttsParams, id);
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, id);
       }
       else {
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, ttsParams);
