@@ -11,14 +11,6 @@
 */
 
 exports.speak = function (options, success, error) {
-    var options = {};
-
-    if (typeof text == 'string') {
-        options.text = text;
-    } else {
-        options = text;
-    }
-
     cordova.exec(success, error, 'TTS', 'speak', [options]);
 };
 
