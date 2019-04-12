@@ -1,12 +1,12 @@
 /*
-    Cordova Text-to-Speech Plugin
-    https://github.com/vilic/cordova-plugin-tts
+ Cordova Text-to-Speech Plugin
+ https://github.com/vilic/cordova-plugin-tts
  
-    by VILIC VANE
-    https://github.com/vilic
+ by VILIC VANE
+ https://github.com/vilic
  
-    MIT License
-*/
+ MIT License
+ */
 
 #import <Cordova/CDV.h>
 #import <Cordova/CDVAvailability.h>
@@ -30,8 +30,23 @@
     }
 }
 
+-(void)execCommandSafeOnThreadpool:(void (^)())block withCDVInvokedUrlCommand:(CDVInvokedUrlCommand*)callbackContext {
+    [self.commandDelegate runInBackground:^{
+        @try {
+            block();
+        } @catch (NSException *exception) {
+            [self error:exception withCDVInvokedUrlCommand:callbackContext];
+        }
+    }];
+}
+
+-(void)error:(NSException*)exception withCDVInvokedUrlCommand:(CDVInvokedUrlCommand*)context {
+    NSLog(@"intellierror %@ %@", [exception reason], [exception callStackSymbols]);
+    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR] callbackId:context.callbackId];
+}
+
 - (void)speak:(CDVInvokedUrlCommand*)command {
-    [self.commandDelegate runInBackground: ^{
+    [self execCommandSafeOnThreadpool:^{
         if (callbackId) {
             lastCallbackId = callbackId;
         }
@@ -53,7 +68,7 @@
         if (!rate) {
             rate = AVSpeechUtteranceDefaultSpeechRate;
         }
-
+        
         if (text) {
             AVSpeechUtterance* utterance = [[AVSpeechUtterance new] initWithString:text];
             utterance.voice = [AVSpeechSynthesisVoice voiceWithLanguage:locale];
@@ -61,15 +76,16 @@
             //utterance.rate = (AVSpeechUtteranceMinimumSpeechRate * 1.5 + AVSpeechUtteranceDefaultSpeechRate) / 2.25 * rate * rate;
             // workaround for https://github.com/vilic/cordova-plugin-tts/issues/21
             /*if ([[[UIDevice currentDevice] systemVersion] floatValue] <= 9.0) {
-            utterance.rate = utterance.rate * 2;
-            // see http://stackoverflow.com/questions/26097725/avspeechuterrance-speed-in-ios-8
-            }*/
+             utterance.rate = utterance.rate * 2;
+             // see http://stackoverflow.com/questions/26097725/avspeechuterrance-speed-in-ios-8
+             }*/
             //utterance.pitchMultiplier = 1.2;
             [synthesizer speakUtterance:utterance];
         } else {
-             [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK] callbackId:callbackId];
+            [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK] callbackId:callbackId];
         }
-    }];
+    } withCDVInvokedUrlCommand:command];
+    
 }
 
 - (void)stop:(CDVInvokedUrlCommand*)command {
@@ -87,7 +103,7 @@
     if ([languages hasPrefix:@","] && [languages length] > 1) {
         languages = [languages substringFromIndex:1];
     }
-
+    
     CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:languages];
     [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
